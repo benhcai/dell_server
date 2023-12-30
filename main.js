@@ -4,45 +4,6 @@ exec = util.promisify(exec);
 const readline = require("readline");
 const commands = require("./commands");
 
-async function executeCommand(command) {
-  try {
-    const { stdout, stderr } = await exec(command);
-    return { stdout, stderr };
-  } catch (err) {
-    throw err;
-  }
-}
-
-async function setPassword(question = "Enter password: ") {
-  const input = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false,
-  });
-  const stdin = process.stdin;
-  const inputHandler = function (char) {
-    char = char + "";
-    switch (char) {
-      case "\n":
-      case "\r":
-      case "\u0004":
-        stdin.removeListener("data", inputHandler);
-        break;
-      default:
-        process.stdout.write("\x1B[2K\x1B[200D" + question); // Clear the input line
-        break;
-    }
-  };
-  return new Promise((res) => {
-    process.stdin.on("data", inputHandler);
-    input.question(question, (pass) => {
-      input.close();
-      input.history = input.history.slice(1);
-      res(pass);
-    });
-  });
-}
-
 function createList(commands) {
   let list = "";
   let newLine = "\n";
@@ -72,17 +33,14 @@ async function selectFunction(question = "Type 0 to exit") {
   });
 }
 
-// async function executeSelection(command) {
-//   return new Promise(async (res) => {
-//     try {
-//       const { stdout, stderr } = await executeCommand(command);
-//       console.log(stdout, stderr);
-//     } catch (err) {
-//       console.error("Command execution failed:", err);
-//     }
-//     res(true);
-//   });
-// }
+async function executeCommand(command) {
+  try {
+    const { stdout, stderr } = await exec(command);
+    return { stdout, stderr };
+  } catch (err) {
+    throw err;
+  }
+}
 
 async function validateSelection(question = "Confirm (y/n): ") {
   return new Promise((res) => {
@@ -100,14 +58,8 @@ async function validateSelection(question = "Confirm (y/n): ") {
 }
 
 async function main() {
-  // Set password
-  const password = await setPassword();
-  const res1 = await executeCommand(`export SSHPASS=${password}`);
-  console.log(res1);
-  const res2 = await executeCommand(`echo $SSHPASS`);
-  // console.log(process.env.SSHPASS);
-
   while (true) {
+    // select bash command
     const selection = await selectFunction(commandsListQuestion);
     if (selection === 0) break;
     if (selection >= commands.length) {
@@ -122,6 +74,7 @@ async function main() {
     console.log();
     if (validation !== "y") continue;
 
+    // run command
     let stdout = "";
     let stderr = "";
     try {
