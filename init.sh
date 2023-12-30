@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Prompt the user for input
-echo "Please enter your password: "
+# Prompt dell idrac racadm pass
+echo "Enter racadm pass: "
+read -s DELLPASS
+eval "export DELLPASS='$DELLPASS'"
 
-# Read user input and store it in a variable
-read -s SSHPASS
-
-# Set env variable
-eval "export SSHPASS='$SSHPASS'"
+# Prompt esxi pass
+echo "Enter esxi pass: "
+read -s ESXIPASS
+eval "export ESXIPASS='$ESXIPASS'"
 
 node main.js
