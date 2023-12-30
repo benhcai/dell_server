@@ -3,6 +3,7 @@ let exec = require("child_process").exec;
 exec = util.promisify(exec);
 const readline = require("readline");
 const commands = require("./commands");
+const setPassword = require("./setPassword");
 
 function createList(commands) {
   let list = "";
@@ -58,6 +59,11 @@ async function validateSelection(question = "Confirm (y/n): ") {
 }
 
 async function main() {
+  const pass = await setPassword();
+  const res1 = await executeCommand(`export SSHPASS=${pass}`);
+  const res2 = await executeCommand(`exho $SSHPASS`);
+  console.log(res1, res2);
+
   while (true) {
     // select bash command
     const selection = await selectFunction(commandsListQuestion);
