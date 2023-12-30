@@ -101,10 +101,9 @@ async function validateSelection(question = "Confirm (y/n): ") {
 
 async function main() {
   // Set password
-  // const password = await setPassword();
-  // process.env.SSHPASS = password;
+  const password = await setPassword();
+  process.env.SSHPASS = password;
   // console.log(process.env.SSHPASS);
-  process.env.SSHPASS = "pen_is_here";
 
   while (true) {
     const selection = await selectFunction(commandsListQuestion);
