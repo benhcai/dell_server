@@ -1,3 +1,5 @@
+const readline = require("readline");
+
 async function setPassword(question = "Enter password: ") {
   const input = readline.createInterface({
     input: process.stdin,
