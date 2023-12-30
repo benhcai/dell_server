@@ -70,6 +70,7 @@ async function main() {
     const selectedCommand = commands[selection];
     console.log("Selected: ", selectedCommand);
 
+    // include generic id: if n => exit, if y || number || enter => continue
     // validate selection with y/n
     const validation = await validateSelection();
     console.log();
